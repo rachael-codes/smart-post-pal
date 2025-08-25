@@ -27,6 +27,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { CreatePostDialog } from './CreatePostDialog';
 
 interface Post {
   id: string;
@@ -165,10 +166,7 @@ export const PostManager = () => {
           <h2 className="text-2xl font-semibold">Post Manager</h2>
           <p className="text-muted-foreground">Manage your scheduled and published posts</p>
         </div>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Create Post
-        </Button>
+        <CreatePostDialog onPostCreated={fetchPosts} />
       </div>
 
       {/* Filters */}
