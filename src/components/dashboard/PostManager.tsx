@@ -28,6 +28,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { CreatePostDialog } from './CreatePostDialog';
+import { PublishPostButton } from './PublishPostButton';
 
 interface Post {
   id: string;
@@ -261,6 +262,19 @@ export const PostManager = () => {
                             Created: {new Date(post.created_at).toLocaleDateString()}
                           </span>
                         </div>
+                        
+                        {/* Publish Button */}
+                        {(post.status === 'draft' || post.status === 'scheduled') && (
+                          <div className="mt-3">
+                            <PublishPostButton
+                              postId={post.id}
+                              platform={post.platform.name}
+                              content={post.content}
+                              hashtags={post.hashtags}
+                              onPublished={fetchPosts}
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
                     
