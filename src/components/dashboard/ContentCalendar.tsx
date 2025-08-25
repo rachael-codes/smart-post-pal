@@ -1,16 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Instagram, Twitter, Linkedin, Facebook, Music, Youtube, FileText, CheckCircle, Edit } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Plus, Instagram, Twitter, Linkedin, Facebook, Music, Youtube, FileText, CheckCircle, Edit, ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-
-const localizer = momentLocalizer(moment);
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth } from 'date-fns';
 
 interface Post {
   id: string;
@@ -37,6 +34,7 @@ const platformIcons = {
 export const ContentCalendar = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -82,29 +80,29 @@ export const ContentCalendar = () => {
     }
   };
 
-  const calendarEvents = posts.map(post => ({
-    id: post.id,
-    title: post.title || 'Untitled Post',
-    start: new Date(post.scheduled_at),
-    end: new Date(post.scheduled_at),
-    resource: post,
-  }));
-
-  const EventComponent = ({ event }: any) => {
-    const post = event.resource;
-    const IconComponent = platformIcons[post.platform.icon as keyof typeof platformIcons];
-    
-    return (
-      <div className="flex items-center gap-1 text-xs p-1">
-        {IconComponent && <IconComponent className="h-3 w-3" />}
-        <span className="truncate">{event.title}</span>
-      </div>
+  const getPostsForDate = (date: Date) => {
+    return posts.filter(post => 
+      isSameDay(new Date(post.scheduled_at), date)
     );
   };
 
-  const handleSelectSlot = ({ start }: any) => {
-    // Open post creation modal with selected date
-    console.log('Selected slot:', start);
+  const PostItem = ({ post }: { post: Post }) => {
+    const IconComponent = platformIcons[post.platform?.icon as keyof typeof platformIcons];
+    
+    return (
+      <div className="flex items-center gap-2 p-2 bg-primary/5 rounded-md mb-2">
+        {IconComponent && <IconComponent className="h-4 w-4 text-primary" />}
+        <div className="flex-1">
+          <p className="text-sm font-medium truncate">{post.title || 'Untitled Post'}</p>
+          <p className="text-xs text-muted-foreground">
+            {format(new Date(post.scheduled_at), 'HH:mm')}
+          </p>
+        </div>
+        <Badge variant={post.status === 'published' ? 'default' : 'secondary'} className="text-xs">
+          {post.status}
+        </Badge>
+      </div>
+    );
   };
 
   if (loading) {
@@ -158,7 +156,7 @@ export const ContentCalendar = () => {
                 </p>
               </div>
               <div className="p-2 rounded-full bg-secondary/10">
-                <Calendar className="h-4 w-4 text-secondary" />
+                <CalendarDays className="h-4 w-4 text-secondary" />
               </div>
             </div>
           </CardContent>
@@ -198,25 +196,38 @@ export const ContentCalendar = () => {
       </div>
 
       {/* Calendar */}
-      <Card>
-        <CardContent className="p-6">
-          <div style={{ height: '600px' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>Calendar View</CardTitle>
+          </CardHeader>
+          <CardContent>
             <Calendar
-              localizer={localizer}
-              events={calendarEvents}
-              startAccessor="start"
-              endAccessor="end"
-              onSelectSlot={handleSelectSlot}
-              selectable
-              components={{
-                event: EventComponent,
-              }}
-              style={{ height: '100%' }}
-              className="rounded-lg"
+              mode="single"
+              selected={selectedDate}
+              onSelect={(date) => date && setSelectedDate(date)}
+              className="rounded-md border"
             />
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Posts for {format(selectedDate, 'MMM d, yyyy')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {getPostsForDate(selectedDate).length === 0 ? (
+                <p className="text-muted-foreground text-sm">No posts scheduled for this date.</p>
+              ) : (
+                getPostsForDate(selectedDate).map(post => (
+                  <PostItem key={post.id} post={post} />
+                ))
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
