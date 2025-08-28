@@ -7,6 +7,7 @@ import { Plus, Instagram, Twitter, Linkedin, Facebook, Music, Youtube, FileText,
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { CreatePostDialog } from './CreatePostDialog';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth } from 'date-fns';
 
 interface Post {
@@ -124,10 +125,7 @@ export const ContentCalendar = () => {
           <h2 className="text-2xl font-semibold">Content Calendar</h2>
           <p className="text-muted-foreground">Plan and schedule your social media posts</p>
         </div>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Create Post
-        </Button>
+        <CreatePostDialog onPostCreated={fetchPosts} />
       </div>
 
       {/* Stats Cards */}
