@@ -66,6 +66,8 @@ export const AIGenerator = () => {
 
     setLoading(true);
     try {
+      console.log('Starting AI content generation with:', { topic, platform, tone, contentType });
+      
       const { data, error } = await supabase.functions.invoke('generate-ai-content', {
         body: {
           topic,
@@ -75,19 +77,31 @@ export const AIGenerator = () => {
         },
       });
 
-      if (error) throw error;
+      console.log('Supabase function response:', { data, error });
 
-      if (data.success) {
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
+      }
+
+      if (data && data.success) {
         setGeneratedContent(data.data);
         toast({
           title: "Content generated!",
           description: "AI has created your social media content.",
         });
       } else {
-        throw new Error(data.error || 'Failed to generate content');
+        console.error('Function returned error:', data);
+        throw new Error(data?.error || 'Failed to generate content');
       }
     } catch (error: any) {
-      console.error('Generation error:', error);
+      console.error('Generation error details:', {
+        message: error.message,
+        stack: error.stack,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
       toast({
         title: "Generation failed",
         description: error.message || "Failed to generate content. Please try again.",
