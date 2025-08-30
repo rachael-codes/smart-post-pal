@@ -55,7 +55,7 @@ export const ContentCalendar = () => {
           content,
           scheduled_at,
           status,
-          platforms:platform_id (
+          platforms!posts_platform_id_fkey (
             name,
             color,
             icon

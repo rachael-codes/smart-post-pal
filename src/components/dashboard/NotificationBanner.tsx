@@ -67,11 +67,11 @@ export const NotificationBanner = () => {
           scheduled_for,
           sent,
           type,
-          posts (
+          posts!notifications_post_id_fkey (
             id,
             title,
             content,
-            platforms:platform_id (
+            platforms!posts_platform_id_fkey (
               name,
               color,
               icon

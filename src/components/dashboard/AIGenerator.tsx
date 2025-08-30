@@ -68,6 +68,13 @@ export const AIGenerator = () => {
     try {
       console.log('Starting AI content generation with:', { topic, platform, tone, contentType });
       
+      // First test the OpenAI API key
+      console.log('Testing OpenAI API key...');
+      const testResponse = await supabase.functions.invoke('test-openai', {
+        body: {}
+      });
+      console.log('OpenAI test response:', testResponse);
+      
       const { data, error } = await supabase.functions.invoke('generate-ai-content', {
         body: {
           topic,
