@@ -1,13 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
-console.log('OpenAI API Key available:', openAIApiKey ? 'Yes' : 'No');
-
-if (!openAIApiKey) {
-  console.error('CRITICAL: OPENAI_API_KEY environment variable is not set');
-}
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -20,13 +13,15 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Starting AI content generation...');
+    const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+    console.log('=== AI Content Generation Function ===');
+    console.log('OpenAI API Key available:', !!openAIApiKey);
     
     if (!openAIApiKey) {
-      console.error('OpenAI API key is missing - cannot proceed');
+      console.error('CRITICAL: OpenAI API key not found in environment');
       return new Response(JSON.stringify({ 
         success: false, 
-        error: 'AI service is not properly configured. Please contact support.' 
+        error: 'AI service is not configured. Please check your OpenAI API key in project settings.' 
       }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -72,6 +67,7 @@ serve(async (req) => {
           { role: 'user', content: userPrompt }
         ],
         max_tokens: 500,
+        temperature: 0.8,
         response_format: { type: "json_object" }
       }),
     });
