@@ -5,6 +5,7 @@ import { AIGenerator } from './AIGenerator';
 import { PostManager } from './PostManager';
 import { Analytics } from './Analytics';
 import { Settings } from './Settings';
+import { NotificationBanner } from './NotificationBanner';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { LogOut, User } from 'lucide-react';
@@ -73,7 +74,12 @@ export const Dashboard = () => {
 
         {/* Main Content */}
         <main className="flex-1 overflow-auto">
-          {renderContent()}
+          <div className="p-6">
+            <NotificationBanner />
+            <div className="mt-4">
+              {renderContent()}
+            </div>
+          </div>
         </main>
       </div>
     </div>

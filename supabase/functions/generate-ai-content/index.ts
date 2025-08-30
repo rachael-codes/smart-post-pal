@@ -2,9 +2,10 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+console.log('OpenAI API Key available:', openAIApiKey ? 'Yes' : 'No');
 
 if (!openAIApiKey) {
-  console.error('OPENAI_API_KEY environment variable is not set');
+  console.error('CRITICAL: OPENAI_API_KEY environment variable is not set');
 }
 
 const corsHeaders = {
@@ -19,11 +20,13 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Starting AI content generation...');
+    
     if (!openAIApiKey) {
-      console.error('OpenAI API key is missing');
+      console.error('OpenAI API key is missing - cannot proceed');
       return new Response(JSON.stringify({ 
         success: false, 
-        error: 'OpenAI API key not configured. Please contact administrator.' 
+        error: 'AI service is not properly configured. Please contact support.' 
       }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -31,6 +34,7 @@ serve(async (req) => {
     }
 
     const { topic, platform, tone, contentType } = await req.json();
+    console.log('Request details:', { topic, platform, tone, contentType });
 
     console.log('AI Content Generation Request:', { topic, platform, tone, contentType });
 
@@ -54,6 +58,7 @@ serve(async (req) => {
     
     Focus on creating content that will resonate with the target audience and encourage engagement.`;
 
+    console.log('Making request to OpenAI API...');
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -71,26 +76,66 @@ serve(async (req) => {
       }),
     });
 
+    console.log('OpenAI response status:', response.status);
+
     if (!response.ok) {
       const errorData = await response.text();
-      console.error('OpenAI API Error:', response.status, errorData);
-      throw new Error(`OpenAI API Error: ${response.status} - ${errorData}`);
+      console.error('OpenAI API Error Details:', response.status, errorData);
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: `AI service error (${response.status}): ${errorData.slice(0, 200)}` 
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const data = await response.json();
-    console.log('OpenAI Response:', data);
+    console.log('OpenAI Response received:', { 
+      hasChoices: !!data.choices, 
+      choicesLength: data.choices?.length || 0 
+    });
 
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      throw new Error('Invalid response from OpenAI API');
+      console.error('Invalid OpenAI response structure:', JSON.stringify(data, null, 2));
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Received invalid response from AI service' 
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    const generatedContent = JSON.parse(data.choices[0].message.content);
+    let generatedContent;
+    try {
+      generatedContent = JSON.parse(data.choices[0].message.content);
+      console.log('Parsed AI content:', Object.keys(generatedContent));
+    } catch (parseError) {
+      console.error('Failed to parse AI response:', data.choices[0].message.content);
+      console.error('Parse error:', parseError);
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'AI generated invalid response format. Please try again.' 
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     // Validate the response structure
     if (!generatedContent.caption || !generatedContent.hashtags || !generatedContent.engagement_prediction) {
-      throw new Error('Generated content missing required fields');
+      console.error('Generated content missing required fields:', generatedContent);
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'AI generated incomplete content. Please try again.' 
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
+    console.log('Successfully generated AI content');
     return new Response(JSON.stringify({
       success: true,
       data: {
@@ -101,11 +146,13 @@ serve(async (req) => {
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
-  } catch (error) {
-    console.error('Error in generate-ai-content function:', error);
+    
+  } catch (error: any) {
+    console.error('Unexpected error in generate-ai-content function:', error);
+    console.error('Error stack:', error.stack);
     return new Response(JSON.stringify({ 
       success: false, 
-      error: error.message || 'Failed to generate content' 
+      error: error.message || 'An unexpected error occurred while generating content' 
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

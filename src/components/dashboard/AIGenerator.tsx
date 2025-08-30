@@ -151,7 +151,7 @@ export const AIGenerator = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-semibold">AI Content Generator</h2>
         <p className="text-muted-foreground">Generate engaging captions and hashtags with AI</p>
