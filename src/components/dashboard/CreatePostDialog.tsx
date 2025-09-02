@@ -42,6 +42,7 @@ export const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   const [loading, setLoading] = useState(false);
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedTime, setSelectedTime] = useState<{ hour: string; minute: string }>({ hour: '09', minute: '00' });
   const [hashtags, setHashtags] = useState<string[]>([]);
   const [hashtagInput, setHashtagInput] = useState('');
   const [formData, setFormData] = useState({
@@ -92,28 +93,50 @@ export const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
 
     setLoading(true);
     try {
-      const { error } = await supabase
+      let scheduledDateTime = null;
+      if (selectedDate) {
+        scheduledDateTime = new Date(selectedDate);
+        scheduledDateTime.setHours(parseInt(selectedTime.hour), parseInt(selectedTime.minute), 0, 0);
+      }
+
+      const { data: postData, error } = await supabase
         .from('posts')
         .insert({
           user_id: user.id,
           title: formData.title,
           content: formData.content,
           platform_id: formData.platform_id,
-          scheduled_at: selectedDate?.toISOString(),
-          status: selectedDate ? 'scheduled' : formData.status,
+          scheduled_at: scheduledDateTime?.toISOString(),
+          status: scheduledDateTime ? 'scheduled' : formData.status,
           hashtags: hashtags
-        });
+        })
+        .select('id')
+        .single();
 
       if (error) throw error;
 
+      // Create notification for scheduled posts
+      if (scheduledDateTime && postData) {
+        await supabase
+          .from('notifications')
+          .insert({
+            user_id: user.id,
+            post_id: postData.id,
+            message: `Time to post: ${formData.title || 'Your scheduled post'}`,
+            scheduled_for: scheduledDateTime.toISOString(),
+            type: 'post_reminder'
+          });
+      }
+
       toast({
         title: "Post created successfully",
-        description: selectedDate ? "Your post has been scheduled." : "Your post has been saved as a draft.",
+        description: scheduledDateTime ? "Your post has been scheduled." : "Your post has been saved as a draft.",
       });
 
       // Reset form
       setFormData({ title: '', content: '', platform_id: '', status: 'draft' });
       setSelectedDate(undefined);
+      setSelectedTime({ hour: '09', minute: '00' });
       setHashtags([]);
       setHashtagInput('');
       setOpen(false);
@@ -221,26 +244,59 @@ export const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
 
           <div className="space-y-2">
             <Label>Schedule (Optional)</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start text-left font-normal"
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {selectedDate ? format(selectedDate, 'PPP') : 'Pick a date'}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={setSelectedDate}
-                  disabled={(date) => date < new Date()}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <div className="space-y-3">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-left font-normal"
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {selectedDate ? format(selectedDate, 'PPP') : 'Pick a date'}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={setSelectedDate}
+                    disabled={(date) => date < new Date()}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              
+              {selectedDate && (
+                <div className="flex gap-2 items-center">
+                  <Label className="text-sm">Time:</Label>
+                  <Select value={selectedTime.hour} onValueChange={(value) => setSelectedTime({ ...selectedTime, hour: value })}>
+                    <SelectTrigger className="w-20">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 24 }, (_, i) => (
+                        <SelectItem key={i} value={i.toString().padStart(2, '0')}>
+                          {i.toString().padStart(2, '0')}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <span className="text-sm">:</span>
+                  <Select value={selectedTime.minute} onValueChange={(value) => setSelectedTime({ ...selectedTime, minute: value })}>
+                    <SelectTrigger className="w-20">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 60 }, (_, i) => (
+                        <SelectItem key={i} value={i.toString().padStart(2, '0')}>
+                          {i.toString().padStart(2, '0')}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex justify-end gap-3">
@@ -253,7 +309,7 @@ export const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? 'Creating...' : selectedDate ? 'Schedule Post' : 'Save Draft'}
+              {loading ? 'Creating...' : selectedDate ? `Schedule for ${selectedTime.hour}:${selectedTime.minute}` : 'Save Draft'}
             </Button>
           </div>
         </form>

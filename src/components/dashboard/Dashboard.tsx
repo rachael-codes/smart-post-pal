@@ -7,6 +7,7 @@ import { Analytics } from './Analytics';
 import { Settings } from './Settings';
 import { NotificationBanner } from './NotificationBanner';
 import { useAuth } from '@/hooks/useAuth';
+import { useNotificationService } from '@/hooks/useNotificationService';
 import { Button } from '@/components/ui/button';
 import { LogOut, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -17,6 +18,9 @@ export const Dashboard = () => {
   const [activeView, setActiveView] = useState<DashboardView>('calendar');
   const { user, signOut } = useAuth();
   const { toast } = useToast();
+  
+  // Initialize notification service
+  useNotificationService();
 
   const handleSignOut = async () => {
     const { error } = await signOut();
