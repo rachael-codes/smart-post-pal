@@ -1,4 +1,4 @@
-import { AuthPage } from '@/components/auth/AuthPage';
+import { LandingPage } from '@/components/landing/LandingPage';
 import { Dashboard } from '@/components/dashboard/Dashboard';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -14,7 +14,7 @@ const Index = () => {
   }
 
   if (!user) {
-    return <AuthPage />;
+    return <LandingPage />;
   }
 
   return <Dashboard />;
