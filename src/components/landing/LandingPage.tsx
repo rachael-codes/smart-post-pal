@@ -14,7 +14,7 @@ import {
   CheckCircle,
   ArrowRight,
   Star,
-  Globe
+  Sparkles
 } from 'lucide-react';
 import { AuthDialog } from './AuthDialog';
 
@@ -63,27 +63,27 @@ export const LandingPage = () => {
   ];
 
   const testimonials = [
-    {
-      name: "Sarah Johnson",
-      role: "Marketing Director",
-      company: "TechStart Inc.",
-      content: "SocialSync has transformed our social media workflow. The AI content generator saves us hours every week.",
-      rating: 5
-    },
-    {
-      name: "Mike Chen",
-      role: "Social Media Manager",
-      company: "GrowthCo",
-      content: "The analytics insights helped us increase our engagement by 300%. Best investment we've made!",
-      rating: 5
-    },
-    {
-      name: "Emily Rodriguez",
-      role: "Content Creator",
-      company: "Creative Studio",
-      content: "Finally, a tool that understands creators. The scheduling is precise and the notifications are perfect.",
-      rating: 5
-    }
+      {
+        name: "Sarah Johnson",
+        role: "Marketing Director", 
+        company: "TechStart Inc.",
+        content: "SmartPost AI has transformed our social media workflow. The AI content generator saves us hours every week.",
+        rating: 5
+      },
+      {
+        name: "Mike Chen",
+        role: "Social Media Manager",
+        company: "GrowthCo", 
+        content: "The analytics insights helped us increase our engagement by 300%. Best investment we've made!",
+        rating: 5
+      },
+      {
+        name: "Emily Rodriguez",
+        role: "Content Creator",
+        company: "Creative Studio",
+        content: "Finally, a tool that understands creators. The scheduling is precise and the notifications are perfect.",
+        rating: 5
+      }
   ];
 
   const handleAuthClick = (mode: 'signin' | 'signup') => {
@@ -98,10 +98,13 @@ export const LandingPage = () => {
         <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50">
           <div className="container mx-auto px-6 py-4 flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Globe className="w-5 h-5 text-primary-foreground" />
+              <div className="p-2 rounded-lg bg-primary text-primary-foreground">
+                <Zap className="h-5 w-5" />
               </div>
-              <span className="text-xl font-bold">SocialSync</span>
+              <div>
+                <span className="text-xl font-semibold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">SmartPost AI</span>
+                <span className="hidden sm:inline text-xs text-muted-foreground ml-2">Social Media Scheduler</span>
+              </div>
             </div>
             
             <div className="flex items-center gap-4">
@@ -122,7 +125,8 @@ export const LandingPage = () => {
         <section className="container mx-auto px-6 py-20 text-center">
           <div className="max-w-4xl mx-auto space-y-8">
             <Badge variant="secondary" className="text-sm px-4 py-2">
-              🚀 AI-Powered Social Media Management
+              <Sparkles className="w-4 h-4 mr-2" />
+              AI-Powered Social Media Management
             </Badge>
             
             <h1 className="text-5xl md:text-6xl font-bold leading-tight">
@@ -133,7 +137,7 @@ export const LandingPage = () => {
             
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Schedule posts, generate AI content, track analytics, and never miss a posting opportunity. 
-              The complete social media management platform for modern creators and businesses.
+              The complete social media management platform powered by intelligent automation.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -199,9 +203,9 @@ export const LandingPage = () => {
           <div className="container mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold mb-4">Loved by Creators Worldwide</h2>
-              <p className="text-xl text-muted-foreground">
-                See what our users have to say about their experience with SocialSync.
-              </p>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              See what our users have to say about their experience with SmartPost AI.
+            </p>
             </div>
             
             <div className="grid md:grid-cols-3 gap-8">
@@ -232,7 +236,7 @@ export const LandingPage = () => {
           <div className="max-w-3xl mx-auto space-y-8">
             <h2 className="text-4xl font-bold">Ready to Transform Your Social Media?</h2>
             <p className="text-xl text-muted-foreground">
-              Join thousands of creators and businesses who trust SocialSync to manage their social media presence.
+              Join thousands of creators and businesses who trust SmartPost AI to manage their social media presence.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -268,14 +272,14 @@ export const LandingPage = () => {
           <div className="container mx-auto px-6">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
-                  <Globe className="w-4 h-4 text-primary-foreground" />
+                <div className="p-1 rounded bg-primary text-primary-foreground">
+                  <Zap className="w-4 h-4" />
                 </div>
-                <span className="font-semibold">SocialSync</span>
+                <span className="font-semibold">SmartPost AI</span>
               </div>
               
               <div className="text-sm text-muted-foreground">
-                © 2024 SocialSync. All rights reserved.
+                © 2024 SmartPost AI. All rights reserved.
               </div>
             </div>
           </div>

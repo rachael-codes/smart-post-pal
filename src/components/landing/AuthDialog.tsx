@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Eye, EyeOff, Globe } from 'lucide-react';
+import { Loader2, Eye, EyeOff, Zap, Sparkles } from 'lucide-react';
 
 interface AuthDialogProps {
   open: boolean;
@@ -108,10 +108,12 @@ export const AuthDialog = ({ open, onOpenChange, mode, onModeChange }: AuthDialo
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Globe className="w-5 h-5 text-primary-foreground" />
+            <div className="p-2 rounded-lg bg-primary text-primary-foreground">
+              <Zap className="h-5 w-5" />
             </div>
-            <span className="text-xl font-bold">SocialSync</span>
+            <div>
+              <span className="text-xl font-semibold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">SmartPost AI</span>
+            </div>
           </div>
           <DialogTitle className="text-center">
             {mode === 'signup' ? 'Create Your Account' : 'Welcome Back'}
