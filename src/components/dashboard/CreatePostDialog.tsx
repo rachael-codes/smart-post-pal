@@ -35,10 +35,22 @@ interface Platform {
 
 interface CreatePostDialogProps {
   onPostCreated: () => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  defaultContent?: string;
+  defaultHashtags?: string[] | null;
 }
 
-export const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
-  const [open, setOpen] = useState(false);
+export const CreatePostDialog = ({ 
+  onPostCreated, 
+  open: externalOpen, 
+  onOpenChange: externalOnOpenChange,
+  defaultContent,
+  defaultHashtags
+}: CreatePostDialogProps) => {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = externalOpen !== undefined ? externalOpen : internalOpen;
+  const setOpen = externalOnOpenChange || setInternalOpen;
   const [loading, setLoading] = useState(false);
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>();
@@ -58,6 +70,15 @@ export const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   useEffect(() => {
     fetchPlatforms();
   }, []);
+
+  useEffect(() => {
+    if (defaultContent) {
+      setFormData(prev => ({ ...prev, content: defaultContent }));
+    }
+    if (defaultHashtags) {
+      setHashtags(defaultHashtags);
+    }
+  }, [defaultContent, defaultHashtags]);
 
   const fetchPlatforms = async () => {
     try {
@@ -155,12 +176,14 @@ export const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Create Post
-        </Button>
-      </DialogTrigger>
+      {externalOpen === undefined && (
+        <DialogTrigger asChild>
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" />
+            Create Post
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create New Post</DialogTitle>

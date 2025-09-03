@@ -3,6 +3,7 @@ import { Sidebar } from './Sidebar';
 import { ContentCalendar } from './ContentCalendar';
 import { AIGenerator } from './AIGenerator';
 import { PostManager } from './PostManager';
+import { TemplateManager } from './TemplateManager';
 import { Analytics } from './Analytics';
 import { Settings } from './Settings';
 import { NotificationBanner } from './NotificationBanner';
@@ -12,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { LogOut, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-type DashboardView = 'calendar' | 'generator' | 'posts' | 'analytics' | 'settings';
+type DashboardView = 'calendar' | 'generator' | 'posts' | 'templates' | 'analytics' | 'settings';
 
 export const Dashboard = () => {
   const [activeView, setActiveView] = useState<DashboardView>('calendar');
@@ -41,6 +42,8 @@ export const Dashboard = () => {
         return <AIGenerator />;
       case 'posts':
         return <PostManager />;
+      case 'templates':
+        return <TemplateManager />;
       case 'analytics':
         return <Analytics />;
       case 'settings':
@@ -61,6 +64,7 @@ export const Dashboard = () => {
             {activeView === 'calendar' && 'Content Calendar'}
             {activeView === 'generator' && 'AI Content Generator'}
             {activeView === 'posts' && 'Post Manager'}
+            {activeView === 'templates' && 'Templates'}
             {activeView === 'analytics' && 'Analytics'}
             {activeView === 'settings' && 'Settings'}
           </h1>

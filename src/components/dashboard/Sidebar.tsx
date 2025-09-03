@@ -4,12 +4,13 @@ import {
   Calendar, 
   Sparkles, 
   FileText, 
+  BookTemplate,
   BarChart3, 
   Settings,
   Zap
 } from 'lucide-react';
 
-type DashboardView = 'calendar' | 'generator' | 'posts' | 'analytics' | 'settings';
+type DashboardView = 'calendar' | 'generator' | 'posts' | 'templates' | 'analytics' | 'settings';
 
 interface SidebarProps {
   activeView: DashboardView;
@@ -20,6 +21,7 @@ const navigation: Array<{ id: DashboardView; label: string; icon: any }> = [
   { id: 'calendar', label: 'Calendar', icon: Calendar },
   { id: 'generator', label: 'AI Generator', icon: Sparkles },
   { id: 'posts', label: 'Posts', icon: FileText },
+  { id: 'templates', label: 'Templates', icon: BookTemplate },
   { id: 'analytics', label: 'Analytics', icon: BarChart3 },
   { id: 'settings', label: 'Settings', icon: Settings },
 ];
