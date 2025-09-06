@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
+const redirectUrl = import.meta.env.VITE_SITE_URL || "http://localhost:5173/auth";
+
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
