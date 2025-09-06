@@ -7,13 +7,14 @@ import { TemplateManager } from './TemplateManager';
 import { Analytics } from './Analytics';
 import { Settings } from './Settings';
 import { NotificationBanner } from './NotificationBanner';
+import { SubscriptionCard } from './SubscriptionCard';
 import { useAuth } from '@/hooks/useAuth';
 import { useNotificationService } from '@/hooks/useNotificationService';
 import { Button } from '@/components/ui/button';
 import { LogOut, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-type DashboardView = 'calendar' | 'generator' | 'posts' | 'templates' | 'analytics' | 'settings';
+type DashboardView = 'calendar' | 'generator' | 'posts' | 'templates' | 'analytics' | 'settings' | 'subscription';
 
 export const Dashboard = () => {
   const [activeView, setActiveView] = useState<DashboardView>('calendar');
@@ -48,6 +49,8 @@ export const Dashboard = () => {
         return <Analytics />;
       case 'settings':
         return <Settings />;
+      case 'subscription':
+        return <SubscriptionCard />;
       default:
         return <ContentCalendar />;
     }
@@ -67,6 +70,7 @@ export const Dashboard = () => {
             {activeView === 'templates' && 'Templates'}
             {activeView === 'analytics' && 'Analytics'}
             {activeView === 'settings' && 'Settings'}
+            {activeView === 'subscription' && 'Subscription'}
           </h1>
           
           <div className="flex items-center gap-4">

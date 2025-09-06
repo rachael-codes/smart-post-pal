@@ -7,10 +7,12 @@ import {
   BookTemplate,
   BarChart3, 
   Settings,
-  Zap
+  Zap,
+  CreditCard
 } from 'lucide-react';
+import { useSubscription } from '@/hooks/useSubscription';
 
-type DashboardView = 'calendar' | 'generator' | 'posts' | 'templates' | 'analytics' | 'settings';
+type DashboardView = 'calendar' | 'generator' | 'posts' | 'templates' | 'analytics' | 'settings' | 'subscription';
 
 interface SidebarProps {
   activeView: DashboardView;
@@ -23,10 +25,12 @@ const navigation: Array<{ id: DashboardView; label: string; icon: any }> = [
   { id: 'posts', label: 'Posts', icon: FileText },
   { id: 'templates', label: 'Templates', icon: BookTemplate },
   { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+  { id: 'subscription', label: 'Subscription', icon: CreditCard },
   { id: 'settings', label: 'Settings', icon: Settings },
 ];
 
 export const Sidebar = ({ activeView, onViewChange }: SidebarProps) => {
+  const { subscription } = useSubscription();
   return (
     <div className="w-64 bg-card border-r flex flex-col">
       {/* Logo */}
@@ -67,18 +71,31 @@ export const Sidebar = ({ activeView, onViewChange }: SidebarProps) => {
         })}
       </nav>
 
-      {/* Upgrade Section */}
+      {/* Subscription Status */}
       <div className="p-4 border-t">
-        <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-4 text-center">
-          <Sparkles className="h-8 w-8 text-primary mx-auto mb-2" />
-          <h3 className="font-semibold text-sm mb-1">Upgrade to Pro</h3>
-          <p className="text-xs text-muted-foreground mb-3">
-            Unlock unlimited AI generations and advanced analytics
-          </p>
-          <Button size="sm" className="w-full">
-            Upgrade Now
-          </Button>
-        </div>
+        {subscription.subscription_tier === 'free' ? (
+          <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-4 text-center">
+            <Sparkles className="h-8 w-8 text-primary mx-auto mb-2" />
+            <h3 className="font-semibold text-sm mb-1">Upgrade to Pro</h3>
+            <p className="text-xs text-muted-foreground mb-3">
+              Unlock unlimited AI generations and advanced analytics
+            </p>
+            <Button size="sm" className="w-full" onClick={() => onViewChange('subscription')}>
+              View Plans
+            </Button>
+          </div>
+        ) : (
+          <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-lg p-4 text-center">
+            <CreditCard className="h-8 w-8 text-green-600 mx-auto mb-2" />
+            <h3 className="font-semibold text-sm mb-1 capitalize">{subscription.subscription_tier} Plan</h3>
+            <p className="text-xs text-muted-foreground mb-3">
+              Subscription active
+            </p>
+            <Button size="sm" variant="outline" className="w-full" onClick={() => onViewChange('subscription')}>
+              Manage
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

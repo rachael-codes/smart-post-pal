@@ -11,6 +11,13 @@ export const useAuth = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setLoading(false);
+      
+      // Check subscription when user is authenticated
+      if (session?.user) {
+        setTimeout(() => {
+          supabase.functions.invoke('check-subscription').catch(console.error);
+        }, 0);
+      }
     });
 
     // Listen for auth changes
@@ -19,6 +26,13 @@ export const useAuth = () => {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
+      
+      // Check subscription when user signs in
+      if (session?.user) {
+        setTimeout(() => {
+          supabase.functions.invoke('check-subscription').catch(console.error);
+        }, 0);
+      }
     });
 
     return () => subscription.unsubscribe();
