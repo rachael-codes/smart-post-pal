@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { 
   Calendar, 
   Bot, 
@@ -14,7 +15,9 @@ import {
   CheckCircle,
   ArrowRight,
   Star,
-  Sparkles
+  Sparkles,
+  Menu,
+  X
 } from 'lucide-react';
 import { AuthDialog } from './AuthDialog';
 
@@ -96,18 +99,19 @@ export const LandingPage = () => {
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
         {/* Header */}
         <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50">
-          <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-primary text-primary-foreground">
-                <Zap className="h-5 w-5" />
+              <div className="p-1.5 sm:p-2 rounded-lg bg-primary text-primary-foreground">
+                <Zap className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <div>
-                <span className="text-xl font-semibold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">SmartPost AI</span>
+                <span className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">SmartPost AI</span>
                 <span className="hidden sm:inline text-xs text-muted-foreground ml-2">Social Media Scheduler</span>
               </div>
             </div>
             
-            <div className="flex items-center gap-4">
+            {/* Desktop Navigation */}
+            <div className="hidden sm:flex items-center gap-4">
               <Button 
                 variant="ghost" 
                 onClick={() => handleAuthClick('signin')}
@@ -118,6 +122,33 @@ export const LandingPage = () => {
                 Get Started Free
               </Button>
             </div>
+
+            {/* Mobile Navigation */}
+            <Sheet>
+              <SheetTrigger asChild className="sm:hidden">
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <div className="flex flex-col space-y-4 mt-8">
+                  <Button 
+                    variant="ghost" 
+                    className="justify-start text-lg"
+                    onClick={() => handleAuthClick('signin')}
+                  >
+                    Sign In
+                  </Button>
+                  <Button 
+                    className="justify-start text-lg"
+                    onClick={() => handleAuthClick('signup')}
+                  >
+                    Get Started Free
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </header>
 
