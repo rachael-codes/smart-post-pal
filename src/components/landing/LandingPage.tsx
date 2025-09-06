@@ -279,7 +279,7 @@ export const LandingPage = () => {
               </div>
               
               <div className="text-sm text-muted-foreground">
-                © 2024 SmartPost AI. All rights reserved.
+                © 2025 SmartPost AI. All rights reserved.
               </div>
             </div>
           </div>
