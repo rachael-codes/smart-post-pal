@@ -46,21 +46,25 @@ export const useAuth = () => {
     return { error };
   };
 
-  const signUp = async (email: string, password: string, displayName?: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          display_name: displayName,
-        },
+const signUp = async (email: string, password: string, displayName?: string) => {
+  const redirectUrl =
+    import.meta.env.VITE_SITE_URL || "http://localhost:5173/"; 
+    // 👆 use your own .env variable
+
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: redirectUrl,
+      data: {
+        display_name: displayName,
       },
-    });
-    return { error };
-  };
+    },
+  });
+
+  return { error };
+};
+
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
