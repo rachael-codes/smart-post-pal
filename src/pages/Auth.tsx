@@ -7,21 +7,19 @@ const Auth = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (user && !loading) {
-      navigate('/');
-    }
-  }, [user, loading, navigate]);
+   useEffect(() => {
+    // Supabase automatically parses ?code= from the URL and updates the session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        // ✅ Redirect user into dashboard after successful verification
+        navigate("/dashboard");
+      } else {
+        // No session yet → maybe show a loading or error state
+        navigate("/");
+      }
+    });
+  }, [navigate]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  return <AuthPage />;
-};
+  return <p>Finishing sign in... please wait</p>;
 
 export default Auth;
