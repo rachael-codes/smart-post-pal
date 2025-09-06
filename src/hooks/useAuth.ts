@@ -47,9 +47,7 @@ export const useAuth = () => {
   };
 
 const signUp = async (email: string, password: string, displayName?: string) => {
-  const redirectUrl =
-    import.meta.env.VITE_SITE_URL || "http://localhost:5173/"; 
-    // 👆 use your own .env variable
+  const redirectUrl = import.meta.env.VITE_SITE_URL || "http://localhost:5173/auth";
 
   const { error } = await supabase.auth.signUp({
     email,
@@ -64,6 +62,7 @@ const signUp = async (email: string, password: string, displayName?: string) => 
 
   return { error };
 };
+
 
 
   const signOut = async () => {
