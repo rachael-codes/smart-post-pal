@@ -1,25 +1,40 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthPage } from '@/components/auth/AuthPage';
 
 const Auth = () => {
+  const [isProcessing, setIsProcessing] = useState(true);
+
   useEffect(() => {
-    const handleMagicLink = async () => {
+    const handleAuthCallback = async () => {
       try {
-        // Parse #access_token from Supabase magic link
-        await supabase.auth.getSessionFromUrl({ storeSession: true });
-        // Redirect user to homepage after verification
-        window.location.href = "https://smart-post-ai.vercel.app";
+        // Check if this is a magic link callback
+        const { data, error } = await supabase.auth.getSession();
+        
+        if (data.session) {
+          // User is authenticated, redirect to dashboard
+          window.location.href = "https://smart-post-ai.vercel.app";
+          return;
+        }
+        
+        if (error) {
+          console.error("Error handling auth callback:", error);
+        }
       } catch (err) {
-        console.error("Error handling verification link:", err);
+        console.error("Error in auth callback:", err);
+      } finally {
+        setIsProcessing(false);
       }
     };
 
-    handleMagicLink();
+    handleAuthCallback();
   }, []);
 
-  // While processing the magic link
-  return <p>Finishing sign in… please wait</p> || <AuthPage />;
+  if (isProcessing) {
+    return <p>Finishing sign in… please wait</p>;
+  }
+
+  return <AuthPage />;
 };
 
 export default Auth;

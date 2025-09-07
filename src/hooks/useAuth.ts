@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
-const redirectUrl = import.meta.env.VITE_SITE_URL || "http://localhost:5173/auth";
+const redirectUrl = "https://smart-post-ai.vercel.app/auth";
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -49,8 +49,6 @@ export const useAuth = () => {
   };
 
 const signUp = async (email: string, password: string, displayName?: string) => {
-  const redirectUrl = import.meta.env.VITE_SITE_URL || "http://localhost:5173/auth";
-
   const { error } = await supabase.auth.signUp({
     email,
     password,
