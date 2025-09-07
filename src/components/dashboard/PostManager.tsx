@@ -160,18 +160,18 @@ export const PostManager = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-semibold">Post Manager</h2>
-          <p className="text-muted-foreground">Manage your scheduled and published posts</p>
+          <h2 className="text-xl lg:text-2xl font-semibold">Post Manager</h2>
+          <p className="text-sm lg:text-base text-muted-foreground">Manage your scheduled and published posts</p>
         </div>
         <CreatePostDialog onPostCreated={fetchPosts} />
       </div>
 
       {/* Filters */}
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -184,7 +184,7 @@ export const PostManager = () => {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-3 py-2 rounded-md border bg-background text-foreground"
+          className="px-3 py-2 rounded-md border bg-background text-foreground w-full sm:w-auto"
         >
           <option value="all">All Status</option>
           <option value="draft">Drafts</option>
@@ -211,54 +211,54 @@ export const PostManager = () => {
             
             return (
               <Card key={post.id}>
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-start gap-4 flex-1">
+                <CardContent className="p-4 lg:p-6">
+                  <div className="flex flex-col lg:flex-row items-start justify-between gap-4">
+                    <div className="flex items-start gap-3 lg:gap-4 flex-1 w-full">
                       {/* Platform Icon */}
-                      <div className="p-2 rounded-lg bg-muted">
-                        {IconComponent && <IconComponent className="h-5 w-5" />}
+                      <div className="p-2 rounded-lg bg-muted flex-shrink-0">
+                        {IconComponent && <IconComponent className="h-4 w-4 lg:h-5 lg:w-5" />}
                       </div>
                       
                       {/* Post Content */}
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-semibold">
+                      <div className="flex-1 space-y-2 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                          <h3 className="font-semibold text-sm lg:text-base truncate">
                             {post.title || 'Untitled Post'}
                           </h3>
-                          <Badge className={statusColors[post.status as keyof typeof statusColors]}>
+                          <Badge className={`${statusColors[post.status as keyof typeof statusColors]} text-xs flex-shrink-0`}>
                             {post.status}
                           </Badge>
                         </div>
                         
-                        <p className="text-muted-foreground text-sm line-clamp-2">
+                        <p className="text-muted-foreground text-xs lg:text-sm line-clamp-2">
                           {post.content}
                         </p>
                         
                         {/* Hashtags */}
                         {post.hashtags && post.hashtags.length > 0 && (
                           <div className="flex flex-wrap gap-1">
-                            {post.hashtags.slice(0, 3).map((hashtag, index) => (
+                            {post.hashtags.slice(0, 2).map((hashtag, index) => (
                               <Badge key={index} variant="outline" className="text-xs">
                                 #{hashtag}
                               </Badge>
                             ))}
-                            {post.hashtags.length > 3 && (
+                            {post.hashtags.length > 2 && (
                               <Badge variant="outline" className="text-xs">
-                                +{post.hashtags.length - 3} more
+                                +{post.hashtags.length - 2} more
                               </Badge>
                             )}
                           </div>
                         )}
                         
                         {/* Metadata */}
-                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                          <span>Platform: {post.platform.name}</span>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs text-muted-foreground">
+                          <span className="truncate">Platform: {post.platform.name}</span>
                           {post.scheduled_at && (
-                            <span>
+                            <span className="truncate">
                               Scheduled: {new Date(post.scheduled_at).toLocaleDateString()}
                             </span>
                           )}
-                          <span>
+                          <span className="truncate">
                             Created: {new Date(post.created_at).toLocaleDateString()}
                           </span>
                         </div>
@@ -279,30 +279,32 @@ export const PostManager = () => {
                     </div>
                     
                     {/* Actions */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Edit className="h-4 w-4 mr-2" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Calendar className="h-4 w-4 mr-2" />
-                          Reschedule
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          className="text-destructive"
-                          onClick={() => handleDeletePost(post.id)}
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div className="flex-shrink-0 self-start lg:self-auto">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Calendar className="h-4 w-4 mr-2" />
+                            Reschedule
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="text-destructive"
+                            onClick={() => handleDeletePost(post.id)}
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

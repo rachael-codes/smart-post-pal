@@ -33,11 +33,18 @@ export const useSubscription = () => {
       setSubscription(data);
     } catch (error: any) {
       console.error('Error checking subscription:', error);
-      toast({
-        title: "Error checking subscription",
-        description: error.message,
-        variant: "destructive",
-      });
+      // Only show toast for non-network/auth errors to avoid spam
+      if (!error.message?.includes('Failed to fetch') && 
+          !error.message?.includes('Authentication error') &&
+          !error.message?.includes('Session from session_id claim')) {
+        toast({
+          title: "Error checking subscription",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+      // Set default subscription state on error
+      setSubscription({ subscribed: false, subscription_tier: 'free' });
     } finally {
       setLoading(false);
     }
